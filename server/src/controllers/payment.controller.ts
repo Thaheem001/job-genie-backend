@@ -95,8 +95,8 @@ const payForSubscription = async (req: Request, res: Response) => {
   const paymentTokken = jwt.sign({ email, fullName }, tokkenSecret);
 
   const product = {
-    name: 'codeGenieSubscription',
-    amount: 25,
+    name: 'Code Genie Subscription',
+    amount: 199.99,
     quantity: 1,
   };
   const APIURL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : process.env.REACT_APP_WEB_URL;
@@ -119,7 +119,7 @@ const payForSubscription = async (req: Request, res: Response) => {
       ],
       mode: 'payment',
       success_url: `${APIURL}/paymentSuccess/${paymentTokken}`,
-      cancel_url: `http://localhost:3001/cancel.html`,
+      cancel_url: `${APIURL}/signUp`,
     });
 
     const stripeId: string = session.id;

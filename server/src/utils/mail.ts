@@ -14,9 +14,9 @@ const transport = nodemailer.createTransport({
 
 const sendMail = (message: string, to: string, isHtml?: boolean) => {
   const mailOptions = {
-    from: 'admin@codeGuru.com',
+    from: 'admin@jobgeniedevs.com',
     to,
-    subject: 'Payment Verification',
+    subject: 'JobGenieDeves Mail',
     text: !isHtml && message,
     html: isHtml && message,
   };

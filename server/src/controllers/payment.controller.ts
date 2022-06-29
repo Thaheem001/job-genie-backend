@@ -95,7 +95,7 @@ const payForSubscription = async (req: Request, res: Response) => {
   const paymentTokken = jwt.sign({ email, fullName }, tokkenSecret);
 
   const product = {
-    name: 'Code Genie Subscription',
+    name: 'JobGenieDevs Subscription',
     amount: 199.99,
     quantity: 1,
   };

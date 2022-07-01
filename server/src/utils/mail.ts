@@ -16,7 +16,7 @@ const sendMail = (message: string, to: string, isHtml?: boolean) => {
   const mailOptions = {
     from: 'admin@jobgeniedevs.com',
     to,
-    subject: 'JobGenieDeves Mail',
+    subject: 'Jobgeniedeves Mail',
     text: !isHtml && message,
     html: isHtml && message,
   };

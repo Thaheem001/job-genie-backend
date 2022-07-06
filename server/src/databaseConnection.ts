@@ -4,7 +4,10 @@ import dotenv from 'dotenv';
 mongoose.Promise = global.Promise;
 dotenv.config();
 
-const { DB_HOST, DB_NAME, DB_PASS, DB_USER } = process.env;
+const DB_HOST = process.env.__DEV__ ? process.env.DEV_DB_HOST : process.env.DB_HOST;
+const DB_NAME = process.env.__DEV__ ? process.env.DEV_DB_NAME : process.env.DB_NAME;
+const DB_PASS = process.env.__DEV__ ? process.env.DEV_DB_PASS : process.env.DB_PASS;
+const DB_USER = process.env.__DEV__ ? process.env.DEV_DB_USER : process.env.DB_USER;
 
 const connectToDatabase = async (): Promise<void> => {
   const options: ConnectionOptions = { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true };

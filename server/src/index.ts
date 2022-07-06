@@ -35,11 +35,11 @@ app.use('/api/', commentRoute());
 app.use('/api/', challengeRoute());
 
 app.get('/api', (req, res) => {
-  return res.json({ message: 'Hello Arslan !' });
+  return res.json({ message: 'Hello Arslan !', enviroment: process.env.__DEV__ ? 'development' : 'production' });
 });
 
 app.get('/api/authorizedOnly', authenticate, (req, res) => {
-  return res.json({ message: 'Hello Arslan !' });
+  return res.json({ message: 'Hello Arslan !', enviroment: process.env.__DEV__ ? 'development' : 'production' });
 });
 
 // All other GET requests not handled before will return our React app
@@ -49,5 +49,5 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, async () => {
   await connectToDatabase();
-  console.log(`Application started on URL ${HOST}:${PORT} 🎉`);
+  console.log(`Application started on URL ${HOST}:${PORT} - Enviroment:${process.env.__DEV__ ? 'development' : 'production'}-->🎉🎉🎉 `);
 });

@@ -99,7 +99,8 @@ const payForSubscription = async (req: Request, res: Response) => {
     amount: 199.99,
     quantity: 1,
   };
-  const APIURL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : process.env.REACT_APP_WEB_URL;
+  const APIURL = process.env.__DEV__ ? 'http://localhost:3000' : process.env.REACT_APP_WEB_URL;
+
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

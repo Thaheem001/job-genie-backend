@@ -131,7 +131,7 @@ const createAndSendResetPasswordUrl = async (req: Request, res: Response) => {
       return res.status(409).json({ error: 'User Not Found' });
     }
 
-    const APIURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : process.env.REACT_APP_WEB_URL;
+    const APIURL = process.env.__DEV__ ? 'http://localhost:3000' : process.env.REACT_APP_WEB_URL;
     const tokkenSecret = process.env.JWT_SECRET;
     const generatedPassResetTokken = jwt.sign({ email, type: 'pass_reset' }, tokkenSecret || 'nothing', { expiresIn: '1h' });
     const passwordResetUrl = `${APIURL}/resetpass/${generatedPassResetTokken}`;

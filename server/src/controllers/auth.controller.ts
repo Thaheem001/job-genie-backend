@@ -32,8 +32,6 @@ const login = async (req: Request, res: Response) => {
       expiresIn: '30d',
     });
 
-
-
     if (process.env.AUTH_COOKIE) {
       res.setHeader(process.env.AUTH_COOKIE, token);
       res.cookie(process.env.AUTH_COOKIE, token);
@@ -107,6 +105,21 @@ const verifyAuthTokken = async (req: Request, res: Response) => {
     return res.status(409).json({ error: error.message });
   }
 };
+const verifyAuthTokkenAdmin = async (req: Request, res: Response) => {
+  try {
+    const { authTokken } = req.body;
+
+    const verifiedTokken = await checkAuthTokken(authTokken, undefined, true);
+
+    if (!verifiedTokken.isValid) {
+      return res.status(409).json({ error: verifiedTokken.message });
+    }
+
+    return res.status(200).json({ message: 'Tokken Verified' });
+  } catch (error: any) {
+    return res.status(409).json({ error: error.message });
+  }
+};
 
 const createAndSendResetPasswordUrl = async (req: Request, res: Response) => {
   try {
@@ -118,7 +131,7 @@ const createAndSendResetPasswordUrl = async (req: Request, res: Response) => {
       return res.status(409).json({ error: 'User Not Found' });
     }
 
-    const APIURL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : process.env.REACT_APP_WEB_URL;
+    const APIURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : process.env.REACT_APP_WEB_URL;
     const tokkenSecret = process.env.JWT_SECRET;
     const generatedPassResetTokken = jwt.sign({ email, type: 'pass_reset' }, tokkenSecret || 'nothing', { expiresIn: '1h' });
     const passwordResetUrl = `${APIURL}/resetpass/${generatedPassResetTokken}`;
@@ -229,4 +242,4 @@ const changePassword = async (req: Request, res: Response) => {
   }
 };
 
-export { login, signUp, verifyAuthTokken, findUserByTokken, createAndSendResetPasswordUrl, resetPassword, changePassword };
+export { login, signUp, verifyAuthTokken, verifyAuthTokkenAdmin, findUserByTokken, createAndSendResetPasswordUrl, resetPassword, changePassword };

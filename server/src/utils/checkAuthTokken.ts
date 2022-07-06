@@ -14,7 +14,7 @@ type VerifyAuthTokkenResult = {
   user?: UserDocument;
 };
 
-const checkAuthTokken = async (authTokken: string, typeCheck?: string) => {
+const checkAuthTokken = async (authTokken: string, typeCheck?: string, checkForAdmin?: boolean) => {
   const result: VerifyAuthTokkenResult = {
     isValid: false,
     message: 'Tokken is Invalid',
@@ -24,27 +24,20 @@ const checkAuthTokken = async (authTokken: string, typeCheck?: string) => {
   try {
     const tokkenSecret = process.env.JWT_SECRET;
 
-
     if (!tokkenSecret || !authTokken) {
       return result;
     }
 
     const verifiedTokken: any = jwt.verify(authTokken, tokkenSecret);
 
-
-
     if ((typeCheck && !verifiedTokken?.type) || verifiedTokken?.type !== typeCheck) {
       result.message = 'Con not use this tokken for this perpouse!';
       return result;
     }
 
-
-
     if (!verifiedTokken?.email) {
       return result;
     }
-
-
 
     const user = await User.findOne({ email: verifiedTokken.email }).exec();
 
@@ -66,13 +59,16 @@ const checkAuthTokken = async (authTokken: string, typeCheck?: string) => {
       return result;
     }
 
-
-
     const exp = new Date(verifiedTokken?.exp * 1000);
     const now = new Date();
 
     if (now > exp) {
       result.message = 'Tokken Expired !';
+      return result;
+    }
+
+    if (checkForAdmin && !user.isAdmin) {
+      result.message = 'This is Only Available for Admin';
       return result;
     }
 

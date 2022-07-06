@@ -15,6 +15,7 @@ type UserDocument = Document & {
   createdAt: string;
   updatedAt: string;
   passwordUpdatedAt: string;
+  isAdmin: boolean;
 };
 
 type UserInput = {
@@ -79,6 +80,10 @@ const usersSchema = new Schema(
       default: new Date().toISOString(),
     },
     enabled: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
+    isAdmin: {
       type: Schema.Types.Boolean,
       default: false,
     },

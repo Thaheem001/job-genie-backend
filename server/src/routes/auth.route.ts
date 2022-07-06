@@ -7,6 +7,7 @@ import {
   createAndSendResetPasswordUrl,
   changePassword,
   resetPassword,
+  verifyAuthTokkenAdmin,
 } from '../controllers/auth.controller';
 
 const authRoute = () => {
@@ -23,6 +24,8 @@ const authRoute = () => {
   router.post('/changePassword', changePassword);
 
   router.post('/verifyAuth', verifyAuthTokken);
+
+  router.post('/verifyAuthAdmin', verifyAuthTokkenAdmin);
 
   router.post('/register', signUp);
 

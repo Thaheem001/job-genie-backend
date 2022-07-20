@@ -96,7 +96,7 @@ const payForSubscription = async (req: Request, res: Response) => {
 
   const product = {
     name: 'JobGenieDevs Subscription',
-    amount: 199.99,
+    amount: 49.99,
     quantity: 1,
   };
   const APIURL = process.env.__DEV__ ? 'http://localhost:3000' : process.env.REACT_APP_WEB_URL;

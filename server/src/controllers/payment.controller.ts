@@ -7,7 +7,9 @@ import { getUserByEmail } from './user.controller';
 import { User } from '../models/user.model';
 import jwt from 'jsonwebtoken';
 
-const { JWT_SECRET, STRIPE_SECRET_KEY } = process.env;
+const { JWT_SECRET } = process.env;
+
+const STRIPE_SECRET_KEY = process.env.__DEV__ ? process.env.DEV_STRIPE_SECRET_KEY : process.env.STRIPE_SECRET_KEY;
 
 const stripe = new Stripe(STRIPE_SECRET_KEY || '', { apiVersion: '2020-08-27' });
 

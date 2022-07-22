@@ -4,7 +4,7 @@ import { User, UserInput } from '../models/user.model';
 import checkAuthTokken from '../utils/checkAuthTokken';
 
 const getUserByEmail = async (email: string) => {
-  const user = await User.findOne({ email }).exec();
+  const user = await User.findOne({ email: email.toLowerCase() }).exec();
 
   return user;
 };
@@ -24,7 +24,7 @@ const createUser = async (req: Request, res: Response) => {
 
   const userInput: UserInput = {
     fullName,
-    email,
+    email: email.toLowerCase(),
   };
 
   const userCreated = await User.create(userInput);

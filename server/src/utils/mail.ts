@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 
 const { EMAIL_HOST, EMAIL_PASS, EMAIL_PORT, EMAIL_USER } = process.env;
 
-
 const transport = nodemailer.createTransport({
   host: EMAIL_HOST,
   port: EMAIL_PORT,
@@ -15,7 +14,7 @@ const transport = nodemailer.createTransport({
 const sendMail = (message: string, to: string, isHtml?: boolean) => {
   const mailOptions = {
     from: 'admin@jobgeniedevs.com',
-    to,
+    to: to.toLowerCase(),
     subject: 'Jobgeniedeves Mail',
     text: !isHtml && message,
     html: isHtml && message,

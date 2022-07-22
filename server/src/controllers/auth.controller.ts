@@ -19,7 +19,7 @@ const login = async (req: Request, res: Response) => {
     return res.status(404).json({ message: `This form requires both emal and password` });
   }
 
-  const user = await User.findOne({ email }).exec();
+  const user = await User.findOne({ email: email.toLowerCase() }).exec();
 
   if (!user || !user.enabled) {
     return res.status(404).json({ message: `Invalid Email Or Password` });
@@ -125,7 +125,7 @@ const createAndSendResetPasswordUrl = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email }).exec();
+    const user = await User.findOne({ email: email.toLowerCase() }).exec();
 
     if (!user) {
       return res.status(409).json({ error: 'User Not Found' });
@@ -133,7 +133,7 @@ const createAndSendResetPasswordUrl = async (req: Request, res: Response) => {
 
     const APIURL = process.env.__DEV__ ? 'http://localhost:3000' : process.env.REACT_APP_WEB_URL;
     const tokkenSecret = process.env.JWT_SECRET;
-    const generatedPassResetTokken = jwt.sign({ email, type: 'pass_reset' }, tokkenSecret || 'nothing', { expiresIn: '1h' });
+    const generatedPassResetTokken = jwt.sign({ email: email.toLowerCase(), type: 'pass_reset' }, tokkenSecret || 'nothing', { expiresIn: '1h' });
     const passwordResetUrl = `${APIURL}/resetpass/${generatedPassResetTokken}`;
     const resetPssStringTemplate = `
     <h1> Password Reset ! </h1>

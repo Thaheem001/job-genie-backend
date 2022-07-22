@@ -84,7 +84,7 @@ const payForSubscription = async (req: Request, res: Response) => {
     return res.status(409).json({ error: 'Email and fullname are  required for this endpoint!' });
   }
 
-  const existingUser = await User.findOne({ email }).exec();
+  const existingUser = await User.findOne({ email: email.toLowerCase() }).exec();
 
   if (existingUser) {
     return res.status(409).json({ error: 'User Already Exists !' });
@@ -94,7 +94,7 @@ const payForSubscription = async (req: Request, res: Response) => {
     return res.status(409).json({ error: 'Something went very wrong !' });
   }
 
-  const paymentTokken = jwt.sign({ email, fullName }, tokkenSecret);
+  const paymentTokken = jwt.sign({ email: email.toLowerCase(), fullName }, tokkenSecret);
 
   const product = {
     name: 'JobGenieDevs Subscription',
@@ -121,6 +121,11 @@ const payForSubscription = async (req: Request, res: Response) => {
         },
       ],
       mode: 'payment',
+      discounts: [
+        {
+          coupon: 'HE5862Zi',
+        },
+      ],
       success_url: `${APIURL}/paymentSuccess/${paymentTokken}`,
       cancel_url: `${APIURL}/signUp`,
     });

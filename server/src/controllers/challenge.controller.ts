@@ -16,8 +16,6 @@ type AddChallengeBody = {
 };
 
 const addChallenge = async (req: Request, res: Response) => {
-  const { challenge }: AddChallengeBody = req.body;
-  console.log({ ...challenge });
   try {
     const { challenge }: AddChallengeBody = req.body;
     const addedChallenge = await Challenge.create({ ...challenge });
@@ -27,16 +25,18 @@ const addChallenge = async (req: Request, res: Response) => {
     return res.status(409).json({ error });
   }
 };
-// get single challenge api 
+// get single challenge api
 const getSingleChallnge = async (req: Request, res: Response) => {
-  const { challengeId }: any = req.body
+  const { challengeId }: any = req.body;
+
   try {
     const singleChallenge = await Challenge.findById(challengeId);
+
     // console.log(singleChallenge);
     return res.status(200).json({ data: singleChallenge });
   } catch (error) {
     return res.status(409).json({ error });
   }
-}
+};
 
 export { getAllChallenges, addChallenge, getSingleChallnge };

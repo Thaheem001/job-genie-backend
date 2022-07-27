@@ -6,6 +6,7 @@ type ChallengeDocument = Document & {
   title: string;
   technologyStack: string[];
   price: number;
+  concatString: string;
   level: string;
   type: string;
 };
@@ -16,6 +17,7 @@ const challengeSchema = new Schema(
     title: { type: String, required: true },
     technologyStack: [{ type: String, required: true }],
     price: { type: Number },
+    concatString: { type: String, required: false },
     level: { type: String },
     type: { type: String, required: true },
   },

@@ -11,6 +11,7 @@ import { paymentRoute } from './routes/payment.route';
 import { githubRepoRoute } from './routes/githubRepo.route';
 import { commentRoute } from './routes/comment.route';
 import { challengeRoute } from './routes/challenge.route';
+import { promoCodeRoute } from './routes/promocode.route';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use('/api/', paymentRoute());
 app.use('/api/', githubRepoRoute());
 app.use('/api/', commentRoute());
 app.use('/api/', challengeRoute());
+app.use('/api/', promoCodeRoute());
 
 app.get('/api', (req, res) => {
   return res.json({ message: 'Hello Arslan !', enviroment: process.env.__DEV__ ? 'development' : 'production' });

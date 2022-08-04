@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import passwordGenerator from 'generate-password';
@@ -6,6 +7,7 @@ import { sendMail } from '../utils/mail';
 import { getUserByEmail } from './user.controller';
 import { User } from '../models/user.model';
 import jwt from 'jsonwebtoken';
+import { PromoCode } from '../models/promocode.model';
 
 const { JWT_SECRET } = process.env;
 
@@ -71,13 +73,34 @@ const paymentSuccess = async (req: Request, res: Response) => {
     data.email,
   );
 
+  if (data.promoMail && data.promoMail !== '') {
+    const promoToUpdate = await PromoCode.find({ email: data.promoMail }).exec();
+
+    if (promoToUpdate.length > 0) {
+      await PromoCode.findByIdAndUpdate(promoToUpdate[0]._id, { tototalSignedUpUsers: promoToUpdate[0].tototalSignedUpUsers + 1 });
+
+      await sendMail(
+        `
+      <h3>Someone signed up using your promo code!</h3>
+      <p>$${data.discount} was credited to your account for this purchase. At any point after you receive $25 in referral credits you can request a withdrawal.</p>
+      <p>Just send us an e-mail with your request and we will send your payment via PayPal , Venmo , Zelle. </p>
+      <p>Your choice =]</p>
+      <p>Thank you for your support!</p>
+      <h5>JobGenie Team</h5>
+      `,
+        data.promoMail,
+        true,
+      );
+    }
+  }
+
   // console.log('Password Successfylly Generated and sent to your email -->', generatedPass, encryptedPassword);
 
   return res.status(200).json({ message: 'Payment Verified & User created', data: createdUser });
 };
 
 const payForSubscription = async (req: Request, res: Response) => {
-  const { email, fullName } = req.body;
+  const { discount, email, fullName, promoMail } = req.body;
   const tokkenSecret = process.env.JWT_SECRET;
 
   if (!email || !fullName) {
@@ -94,11 +117,11 @@ const payForSubscription = async (req: Request, res: Response) => {
     return res.status(409).json({ error: 'Something went very wrong !' });
   }
 
-  const paymentTokken = jwt.sign({ email: email.toLowerCase(), fullName }, tokkenSecret);
+  const paymentTokken = jwt.sign({ email: email.toLowerCase(), fullName, discount, promoMail }, tokkenSecret);
 
   const product = {
     name: 'JobGenieDevs Subscription',
-    amount: 49.99,
+    amount: 49.99 - discount,
     quantity: 1,
   };
   const APIURL = process.env.__DEV__ ? 'http://localhost:3000' : process.env.REACT_APP_WEB_URL;
@@ -121,11 +144,7 @@ const payForSubscription = async (req: Request, res: Response) => {
         },
       ],
       mode: 'payment',
-      discounts: [
-        {
-          coupon: 'HE5862Zi',
-        },
-      ],
+
       success_url: `${APIURL}/paymentSuccess/${paymentTokken}`,
       cancel_url: `${APIURL}/signUp`,
     });

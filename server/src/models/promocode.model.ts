@@ -5,7 +5,7 @@ type PromoCodeDocument = Document & {
   email: string;
   discount: number;
   tototalSignedUpUsers: number;
-  totalPaidUsersForPromo: number;
+  totalPaidAmount: number;
   enabled: boolean;
 };
 
@@ -16,7 +16,7 @@ const PromoCodeSchema = new Schema(
     discount: { type: Number, required: true },
     enabled: { type: Boolean, required: false, default: false },
     tototalSignedUpUsers: { type: Number, required: false, default: 0 },
-    totalPaidUsersForPromo: { type: Number, required: false, default: 0 },
+    totalPaidAmount: { type: Number, required: false, default: 0 },
   },
   {
     collection: 'promoCodes',

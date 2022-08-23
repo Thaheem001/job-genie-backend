@@ -11,6 +11,31 @@ const getAllChallenges = async (req: Request, res: Response) => {
   }
 };
 
+const deleteChallenge = async (req: Request, res: Response) => {
+  try {
+    const { challengeId } = req.params;
+
+    await Challenge.findByIdAndDelete(challengeId).exec();
+
+    return res.status(200).json({ data: 'deleted Successfuly' });
+  } catch (error) {
+    return res.status(409).json({ error });
+  }
+};
+
+const updateChallenge = async (req: Request, res: Response) => {
+  try {
+    const { challengeId } = req.params;
+    const { desc, level, price, title, type }: ChallengeDocument = req.body;
+
+    const updatedChallenge = await Challenge.findByIdAndUpdate(challengeId, { title, price, type, level, desc }).exec();
+
+    return res.status(200).json({ data: updatedChallenge, message: 'updated successfuly' });
+  } catch (error) {
+    return res.status(409).json({ error });
+  }
+};
+
 type AddChallengeBody = {
   challenge: ChallengeDocument;
 };
@@ -18,6 +43,7 @@ type AddChallengeBody = {
 const addChallenge = async (req: Request, res: Response) => {
   try {
     const { challenge }: AddChallengeBody = req.body;
+
     const addedChallenge = await Challenge.create({ ...challenge });
 
     return res.status(200).json({ data: addedChallenge });
@@ -39,4 +65,4 @@ const getSingleChallnge = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllChallenges, addChallenge, getSingleChallnge };
+export { getAllChallenges, addChallenge, getSingleChallnge, deleteChallenge, updateChallenge };

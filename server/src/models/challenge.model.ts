@@ -4,6 +4,7 @@ import mongoose, { Schema, Model, Document } from 'mongoose';
 type ChallengeDocument = Document & {
   img: string;
   title: string;
+  desc: string;
   technologyStack: string[];
   price: number;
   concatString: string;
@@ -17,6 +18,7 @@ const challengeSchema = new Schema(
     title: { type: String, required: true },
     technologyStack: [{ type: String, required: true }],
     price: { type: Number },
+    desc: { type: String },
     concatString: { type: String, required: false },
     level: { type: String },
     type: { type: String, required: true },

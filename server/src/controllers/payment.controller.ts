@@ -102,6 +102,7 @@ const paymentSuccess = async (req: Request, res: Response) => {
 const payForSubscription = async (req: Request, res: Response) => {
   const { discount, email, fullName, promoMail } = req.body;
   const tokkenSecret = process.env.JWT_SECRET;
+  const APIURL = process.env.__DEV__ ? 'http://localhost:3000' : process.env.REACT_APP_WEB_URL;
 
   if (!email || !fullName) {
     return res.status(409).json({ error: 'Email and fullname are  required for this endpoint!' });
@@ -119,43 +120,50 @@ const payForSubscription = async (req: Request, res: Response) => {
 
   const paymentTokken = jwt.sign({ email: email.toLowerCase(), fullName, discount, promoMail }, tokkenSecret);
 
+  const isFreeSignUp = discount >= 199.99;
+
   const product = {
     name: 'JobGenieDevs Subscription',
     amount: 199.99 - discount,
     quantity: 1,
   };
-  const APIURL = process.env.__DEV__ ? 'http://localhost:3000' : process.env.REACT_APP_WEB_URL;
+
+  let stripeId = 'FreeSignUpId';
 
   try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      customer_email: email,
+    if (!isFreeSignUp) {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        customer_email: email,
 
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: product.name,
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: product.name,
+              },
+              unit_amount: product.amount * 100,
             },
-            unit_amount: product.amount * 100,
+            quantity: product.quantity,
           },
-          quantity: product.quantity,
-        },
-      ],
-      mode: 'payment',
+        ],
+        mode: 'payment',
 
-      success_url: `${APIURL}/paymentSuccess/${paymentTokken}`,
-      cancel_url: `${APIURL}/signUp`,
-    });
+        success_url: `${APIURL}/paymentSuccess/${paymentTokken}`,
+        cancel_url: `${APIURL}/signUp`,
+      });
 
-    const stripeId: string = session.id;
-
-    res.status(200).json({ status: 'success', message: 'Payment Initialized Successfull for session ', stripeId });
-
-    // req.body.stripePass = stripeId;
-
-    // await paymentSuccess(req, res);
+      stripeId = session.id;
+      res.status(200).json({ status: 'success', message: 'Payment Initialized Successfull for session ', stripeId });
+    } else {
+      res.status(200).json({
+        status: 'success',
+        message: 'Payment Initialized Successfull for session ',
+        stripeId,
+        manualRedirect: `${APIURL}/paymentSuccess/${paymentTokken}`,
+      });
+    }
   } catch (error: any) {
     return res.status(409).json({ error: error.message });
   }
